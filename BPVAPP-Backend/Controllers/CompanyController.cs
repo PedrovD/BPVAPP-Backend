@@ -10,10 +10,11 @@ namespace BPVAPP_Backend.Controllers
 {
     public class CompanyController : Controller
     {
-        public IActionResult CreateCompany(Company model)
+        [HttpPost]
+        public IActionResult CreateCompany([FromBody]Company model)
         {
             var db = new DbConnection();
-            db.AddCompany(model);
+            db.AddModel(model);
             return View();
         }
     }
