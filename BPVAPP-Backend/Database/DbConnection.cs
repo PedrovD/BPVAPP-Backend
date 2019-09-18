@@ -47,17 +47,16 @@ namespace BPVAPP_Backend.Database
                 }
             }
         }
-        public void AddCompany(Company newCompany)
+        public void AddModel<T>(T model)
         {
             using (var ses = sessionFactory.OpenSession())
             {
                 using (var trans = ses.BeginTransaction())
                 {
-                    ses.SaveOrUpdate(newCompany);
+                    ses.SaveOrUpdate(model);
                     trans.Commit();
                 }
             }
-
         }
 
 

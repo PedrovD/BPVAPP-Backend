@@ -13,15 +13,11 @@ namespace BPVAPP_Backend.Database.Models
         public virtual string Adres { get; set; }
         public virtual string Website { get; set; }
         public virtual string Plaats { get; set; }
-        [DataType(DataType.PostalCode)]
         public virtual string PostCode { get; set; }
-        [DataType(DataType.PhoneNumber)]
         public virtual int TelefoonNummer { get; set; }
         public virtual string ContactPersoon_1 { get; set; }
-        [DataType(DataType.EmailAddress)]
         public virtual string ContactPersoonEmail_1 { get; set; }
         public virtual string ContactPersoon_2 { get; set; }
-        [DataType(DataType.EmailAddress)]
         public virtual string ContactPersoonEmail_2 { get; set; }
         public virtual string Opmerking { get; set; }
     }
