@@ -47,7 +47,19 @@ namespace BPVAPP_Backend.Database
                 }
             }
         }
+        public void AddCompany(Company newCompany)
+        {
+            using (var ses = sessionFactory.OpenSession())
+            {
+                using (var trans = ses.BeginTransaction())
+                {
+                    ses.SaveOrUpdate(newCompany);
+                    trans.Commit();
+                }
+            }
 
-        
+        }
+
+
     }
 }

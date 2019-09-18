@@ -1,0 +1,41 @@
+{
+    "Bedrijf": [
+      {
+        "bedrijfsNaam": "Adversitement BV",
+        "adres": "Liessentstraat 9",
+        "postcode": "5405 AH",
+        "plaats": "Uden",
+        "website": "www.google.nl",
+        "leerbedrijfID": "123456",
+        "telefoonNr": "0248889965",
+        "contactPers1": "John Doe",
+        "eMailContactPers1": "johndoe@mail.com",
+        "contactPers2": "Jane Doe",
+        "eMailContactPers2": "janedoen@mail.com",
+        "opmerking": "Hier komt iets te staan",
+        "geplaatste": "Nee"
+
+      },
+      {
+        "bedrijfsNaam": "Aery",
+        "adres": "Erflanden 4",
+        "postcode": "5831 ZA",
+        "plaats": "Boxmeer",
+        "website": "www.google.nl",
+        "leerbedrijfID": "987654",
+        "telefoonNr": "0249991234",
+        "contactPers1": "Test McTest",
+        "eMailContactPers1": "testmctest@mail.com",
+        "contactPers2": "Text McText",
+        "eMailContactPers2": "textmctext@mail.com",
+        "opmerking": "Hier moet iets ander komen te staan",
+        "geplaatste": "Ja"
+      }
+    ],
+    "Stages": [
+      {
+        "activeStages": "24"
+      }
+    ]
+
+}
