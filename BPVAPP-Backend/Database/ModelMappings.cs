@@ -13,9 +13,9 @@ namespace BPVAPP_Backend.Database
         {
             Table("company_table");
             Id(i => i.Id);
-            Map(i => i.Bedrijfsnaam).Length(255);
+            Map(i => i.Bedrijfsnaam);
             Map(i => i.Adres);
-            Map(i => i.Website).Default("0");
+            Map(i => i.Website);
             Map(i => i.Plaats);
             Map(i => i.PostCode);
             Map(i => i.TelefoonNummer);
