@@ -8,11 +8,7 @@ using static BPVAPP_Backend.Database.Models.LeerlingModel;
 
 namespace BPVAPP_Backend.Database
 {
-<<<<<<< HEAD
-    // Place all the mappings of models in this.
 
-
-=======
     public class CompanyMapping : ClassMap<Company>
     {
         public CompanyMapping()
@@ -32,5 +28,4 @@ namespace BPVAPP_Backend.Database
             Map(i => i.Opmerking);
         }
     }
->>>>>>> c3099071888776178de4ca4ef488f4b32357ccca
 }
