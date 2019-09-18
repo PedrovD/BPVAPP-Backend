@@ -11,6 +11,8 @@ namespace BPVAPP_Backend.Database.Models
         public virtual string FirstName { get; set; }
         public virtual string LastName { get; set; }
         public virtual int CatagoryId { get; set; }
+        public virtual IList<StagebegeleiderModel> leerlingen { get; set; }
+        public virtual int LeerlingId { get; set; }
         public virtual string Mail { get; set; }
         public virtual string Telephone { get; set; }
         public virtual string Password { get; set; }

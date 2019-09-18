@@ -16,7 +16,7 @@ namespace BPVAPP_Backend.Database
         {
             return Fluently.Configure()
                 .Database(MySQLConfiguration.Standard.ConnectionString("")). // Pedro will place the connection string
-                Mappings(m => m.FluentMappings.AddFromAssemblyOf<EmptyModel>()).
+                Mappings(m => m.FluentMappings.AddFromAssemblyOf<LeerlingModel>()).
                 ExposeConfiguration(cfg => new SchemaUpdate(cfg).Execute(true, true)).
                 BuildSessionFactory();
         }

@@ -17,7 +17,8 @@ namespace BPVAPP_Backend.Database.Models
             public virtual string Mail { get; set; }
             public virtual string Telephone { get; set; }
             public virtual string Password { get; set; }
-        }
+        public object Begeleider { get; internal set; }
+    }
         // Can be removed later when we are using real models
     
 }
