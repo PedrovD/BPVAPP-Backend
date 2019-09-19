@@ -10,9 +10,12 @@ namespace BPVAPP_Backend.Database.Models
     {
         public virtual int Id { get; set; }
         public virtual int BedrijfsId { get; set; }
-        public virtual string Naam { get; set; }
-        public virtual string Email { get; set; }
-        public virtual string TelefoonNummer { get; set; }
-        public virtual string Opmerking { get; set; }
+        public virtual string FirstName { get; set; }
+        public virtual string LastName { get; set; }
+        public virtual IList<StagebegeleiderModel> leerlingen { get; set; }
+        public virtual string Mail { get; set; }
+        public virtual string Telephone { get; set; }
+        public virtual string Password { get; set; }
+
     }
 }
