@@ -12,6 +12,7 @@ namespace BPVAPP_Backend.Database.Models
             public virtual string FirstName { get; set; }
             public virtual string LastName { get; set; }
             public virtual int CatagoryId { get; set; }
+            public virtual int LocatieId { get; set; }
             public virtual int BegeleiderId { get; set; }
             public virtual string Postcode { get; set; }
             public virtual string Mail { get; set; }
