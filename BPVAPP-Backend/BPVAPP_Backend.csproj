@@ -28,8 +28,4 @@
     </Content>
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command=":: xcopy -y &quot;&quot; &quot;&quot;" />
-  </Target>
-
 </Project>
