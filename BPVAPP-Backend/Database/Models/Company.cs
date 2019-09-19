@@ -10,7 +10,10 @@ namespace BPVAPP_Backend.Database.Models
     {
         public virtual int Id { get; set; }
         public virtual string Bedrijfsnaam { get; set; }
-        public virtual string Adres { get; set; }
+        public virtual string Postcode { get; set; }
+        public virtual string Plaats { get; set; }
+        public virtual string Staats { get; set; }
+        public virtual string Address { get; set; }
         public virtual string Website { get; set; }
         public virtual string TelefoonNummer { get; set; }
         public virtual string Opmerking { get; set; }
