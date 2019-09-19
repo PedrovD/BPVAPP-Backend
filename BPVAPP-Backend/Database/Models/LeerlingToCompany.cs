@@ -9,11 +9,10 @@ namespace BPVAPP_Backend.Database.Models
     public class LeerlingToCompany
     {
         public virtual int Id { get; set; }
-
-        public virtual string Postcode { get; set; }
-        public virtual string Plaats { get; set; }
-        public virtual string Staats { get; set; }
-        public virtual string Address { get; set; }
+        public virtual int Leerling { get; set; }
+        public virtual int CompanyContactId { get; set; }
+        public virtual string StageStart { get; set; }
+        public virtual string StageEnd { get; set; }
         public virtual int CompanyId { get; set; }
     }
 }
