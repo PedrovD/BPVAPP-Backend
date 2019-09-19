@@ -9,7 +9,6 @@ namespace BPVAPP_Backend.Database.Models
     public class CompanyLocations
     {
         public virtual int Id { get; set; }
-
         public virtual string Postcode { get; set; }
         public virtual string Plaats { get; set; }
         public virtual string Staats { get; set; }
