@@ -55,7 +55,7 @@ namespace BPVAPP_Backend.Database
             Map(i => i.Mail);
             Map(i => i.Telephone);
             Map(i => i.Password);
-            Map(i => i.CatagoryId);
+            //Map(i => i.CatagoryId);
             HasOne(i => i.Begeleider);
         }
     }
