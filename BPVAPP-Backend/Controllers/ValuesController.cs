@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using BPVAPP_Backend.Utils;
+﻿using Microsoft.AspNetCore.Mvc;
 using BPVAPP_Backend.Database.Models;
+using BPVAPP_Backend.Response;
+using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace BPVAPP_Backend.Controllers
 {
@@ -13,23 +12,28 @@ namespace BPVAPP_Backend.Controllers
     {
         // GET api/values
         [HttpGet]
-        public string Get()
+        public object Get()
         {
-            var json = new JsonResponse();
+            var compannies = new List<CompanyModel>();
 
-            //for (var i = 0; i < 5; i++)
-            //{
-            //    json.AddData($"num_{i}", i);
-            //}
+            for (var i = 0; i < 5; i++)
+            {
+                compannies.Add(new CompanyModel {
+                    Bedrijfsnaam = $"Bedrijf_{i}",
+                    Adres = $"Adres_{i}",
+                    Plaats = $"Plaats_{i}"
+                });
+            }
 
-            var company = new CompanyModel {
-                Bedrijfsnaam = "jemoeder"
+            var res = new ResponseModel
+            {
+                Message = "Hello World"
             };
 
-            json.AddCompany(company);
-
-
-            return json.ToString();
+            res.Add("AuthKey",Guid.NewGuid().ToString());
+            res.Add("User",string.IsNullOrEmpty(User.Identity.Name) ? "None" : User.Identity.Name);
+            res.AddList("Bedrijf",compannies);
+            return Json(res);
         }
 
         // GET api/values/5
