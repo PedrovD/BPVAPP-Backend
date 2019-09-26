@@ -11,10 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Bson;
-using Newtonsoft.Json.Linq;
+using BPVAPP_Backend.Response;
 
 namespace BPVAPP_Backend.Controllers
 {
@@ -36,60 +33,78 @@ namespace BPVAPP_Backend.Controllers
         [Authorize]
         [HttpGet]
         [Route("verify")]
-        public string IsAuthenticated()
+        public object IsAuthenticated()
         {
-            return "Je hebt toegang";
+            return new ResponseModel {
+                Message = "Je hebt toegang tot onze api"
+            };
         }
 
         [HttpGet]
         [Route("register")]
-        public async Task<string> CreateAccount(RegisterModel model)
+        public async Task<object> CreateAccount(RegisterModel model)
         {
-            try
+            var rs = new ResponseModel();
+
+            var identity = new IdentityUser
             {
-                var identity = new IdentityUser
-                {
-                    Email = model.Email,
-                    UserName = model.Email
-                };
+                Email = model.Email,
+                UserName = model.Email
+            };
 
-                var result = await _userManager.CreateAsync(identity, model.Password);
+            var result = await _userManager.CreateAsync(identity, model.Password);
 
-                if (result.Succeeded)
-                {
-                    return await GenerateJwtToken(model.Email, identity);
-                }
-
-                return "Error failed to create user";
-            }
-            catch (Exception e)
+            if (result.Succeeded)
             {
-                return e.ToString();
+                rs.Add("authToken", GenerateJwtToken(model.Email, identity));
+                rs.Message = "Gebruiker is toegevoegd";
+                return Json(rs);
             }
+
+            rs.Message = "Registratie is gefaald";
+            rs.StatusCode = 401;
+            Response.StatusCode = 401;
+            return Json(rs);
         }
 
         [HttpGet]
         [Route("login")]
-        public async Task<string> Login(LoginModel model)
+        public async Task<object> Login(LoginModel model)
         {
+            var rs = new ResponseModel();
+
             var user = await _userManager.FindByEmailAsync(model.Email);
 
             if (user == null)
-                return "User not found";
+            {
+                rs.StatusCode = 404;
+                rs.Message = "Gebruiker niet gevonden";
+                return StatusCode(404, Json(rs));
+            }
 
             var login = await _signInManager.PasswordSignInAsync(user, model.Password,true,false);
 
             if (login.Succeeded)
             {
                 var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
-
-                return await GenerateJwtToken(model.Email, appUser);
+                rs.Add("authToken", GenerateJwtToken(model.Email, appUser));
+                rs.Message = "Gebruiker gevonden";
+                return Json(rs);
             }
 
-            return "Error failed to login";
+            rs.Message = "Inloggen is mislukt";
+            rs.StatusCode = 401;
+            Response.StatusCode = 401;
+            return Json(rs);
         }
 
-        private async Task<string> GenerateJwtToken(string email, IdentityUser user)
+        /// <summary>
+        /// Generates an api token that can be used by the front-end to request data
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        private string GenerateJwtToken(string email, IdentityUser user)
         {
             var claims = new List<Claim>
             {
@@ -97,8 +112,6 @@ namespace BPVAPP_Backend.Controllers
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
-
-            
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

@@ -1,53 +1,56 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BPVAPP_Backend.Database;
 using BPVAPP_Backend.Database.Models;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Bson;
 using Newtonsoft.Json.Linq;
-using Microsoft.AspNetCore.Authorization;
+using BPVAPP_Backend.Response;
+using System.Collections.Generic;
 
 namespace BPVAPP_Backend.Controllers
 {
     [Route("api/[controller]")]
     public class CompanyController : Controller
     {
-        [HttpPost]
+        private readonly DbConnection dbConnection;
 
-        public IActionResult CreateCompany([FromBody]CompanyModel model)
+        public CompanyController()
         {
-            var db = new DbConnection();
-            db.AddModel(model);
-            return View();
+            dbConnection = new DbConnection();
+        }
+
+        [HttpGet]
+        [Route("add")]
+        public object CreateCompany(CompanyModel model)
+        {
+            dbConnection.AddModel(model);
+
+            var rs = new ResponseModel {
+                Message = $"{model.Bedrijfsnaam} is toegevoegd"
+            };
+
+            return Json(rs);
         }
 
         [HttpGet]
         [Route("companyId/{id}")]
         public object GetCompanyById(int id)
         {
-            try
+            var res = new ResponseModel();
+
+            var model = dbConnection.GetCompanyById(id);
+
+            if(model == null)
             {
-                JObject json = (JObject)JsonConvert.DeserializeObject(System.IO.File.ReadAllText("data.json"));
-
-                var rtn = json["Bedrijf"][id];
-
-                JObject company = new JObject();
-                JArray companyarr = new JArray
-                {
-                    json["Bedrijf"][id]
-                };
-                company["Bedrijf"] = companyarr;
-
-                return company.ToString();
+                Response.StatusCode = 404;
+                res.Message = $"Bedrijf met id {id} niet gevonden";
+                return Json(res);
             }
-            catch (Exception e)
-            {
-                return e.ToString();
-            }
+
+            res.Message = $"Bedrijf met id {id} gevonden";
+            res.AddList("Bedrijf",new List<CompanyModel> { model });
+
+            return Json(res);
         }
     }
 }
