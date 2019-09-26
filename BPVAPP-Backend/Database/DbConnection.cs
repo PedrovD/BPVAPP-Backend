@@ -16,7 +16,7 @@ namespace BPVAPP_Backend.Database
         {
             return Fluently.Configure()
                 .Database(MySQLConfiguration.Standard.ConnectionString("")).
-                Mappings(m => m.FluentMappings.AddFromAssemblyOf<LeerlingModel>()).
+                Mappings(m => m.FluentMappings.AddFromAssemblyOf<CompanyModel>()).
                 ExposeConfiguration(cfg => new SchemaUpdate(cfg).Execute(true, true)).
                 BuildSessionFactory();
         }
