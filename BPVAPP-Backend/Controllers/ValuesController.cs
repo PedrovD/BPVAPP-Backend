@@ -27,7 +27,6 @@ namespace BPVAPP_Backend.Controllers
             };
 
             json.AddCompany(company);
-            json.AddCompany(company);
 
             return json.ToString();
         }
