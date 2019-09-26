@@ -83,8 +83,6 @@ namespace BPVAPP_Backend.Controllers
             {
                 var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
 
-
-
                 return await GenerateJwtToken(model.Email, appUser);
             }
 
