@@ -9,6 +9,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BPVAPP_Backend.Controllers
 {
@@ -16,7 +17,8 @@ namespace BPVAPP_Backend.Controllers
     public class CompanyController : Controller
     {
         [HttpPost]
-        public IActionResult CreateCompany([FromBody]Company model)
+
+        public IActionResult CreateCompany([FromBody]CompanyModel model)
         {
             var db = new DbConnection();
             db.AddModel(model);
