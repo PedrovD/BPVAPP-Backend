@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using BPVAPP_Backend.Utils;
+using BPVAPP_Backend.Database.Models;
 
 namespace BPVAPP_Backend.Controllers
 {
@@ -11,9 +13,23 @@ namespace BPVAPP_Backend.Controllers
     {
         // GET api/values
         [HttpGet]
-        public IEnumerable<string> Get()
+        public string Get()
         {
-            return new string[] { "value1", "value2", "Value3" };
+            var json = new JsonResponse();
+
+            //for (var i = 0; i < 5; i++)
+            //{
+            //    json.AddData($"num_{i}", i);
+            //}
+
+            var company = new CompanyModel {
+                Bedrijfsnaam = "jemoeder"
+            };
+
+            json.AddCompany(company);
+            json.AddCompany(company);
+
+            return json.ToString();
         }
 
         // GET api/values/5
