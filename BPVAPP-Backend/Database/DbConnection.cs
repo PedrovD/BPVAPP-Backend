@@ -15,7 +15,7 @@ namespace BPVAPP_Backend.Database
         private static ISessionFactory CreateSessionFactory()
         {
             return Fluently.Configure()
-                .Database(MySQLConfiguration.Standard.ConnectionString("")).
+                .Database(MySQLConfiguration.Standard.ConnectionString("Server=localhost; Port=3306; Database=bpvdb; Uid=dbuser_local; Pwd=OMgev{>>o>m(;")).
                 Mappings(m => m.FluentMappings.AddFromAssemblyOf<CompanyModel>()).
                 ExposeConfiguration(cfg => new SchemaUpdate(cfg).Execute(true, true)).
                 BuildSessionFactory();
@@ -47,6 +47,12 @@ namespace BPVAPP_Backend.Database
                 }
             }
         }
+
+        /// <summary>
+        /// Simple methode to add any typ of model
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="model"></param>
         public void AddModel<T>(T model)
         {
             using (var ses = sessionFactory.OpenSession())
@@ -59,6 +65,32 @@ namespace BPVAPP_Backend.Database
             }
         }
 
+        /// <summary>
+        /// Simple methode to remove any type of model
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="model"></param>
+        public void RemoveModel<T>(T model)
+        {
+            using (var ses = sessionFactory.OpenSession())
+            {
+                using (var trans = ses.BeginTransaction())
+                {
+                    ses.Delete(model);
+                    trans.Commit();
+                }
+            }
+        }
 
+        public CompanyModel GetCompanyById(int id)
+        {
+            using (var ses = sessionFactory.OpenSession())
+            {
+                using (var trans = ses.BeginTransaction())
+                {
+                    return ses.Query<CompanyModel>().Where(i => i.Id == id).FirstOrDefault();
+                }
+            }
+        }
     }
 }
