@@ -1,0 +1,70 @@
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+namespace BPVAPP_Backend.Response
+{
+    public class ResponseModel
+    {
+        public int StatusCode { get; set; }
+
+        public DateTime TimeStamp { get; set; }
+
+        public string Message { get; set; }
+
+        public JObject Data { get; set; }
+
+        public ResponseModel(int status = 200, string message = "Success")
+        {
+            StatusCode = status;
+            Message = message;
+            TimeStamp = DateTime.UtcNow;
+            Data = new JObject();
+        }
+
+        /// <summary>
+        /// Adds a value in a json format
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        public void Add(string name, object value)
+        {
+            Data[name] = value.ToString();
+        }
+
+        /// <summary>
+        /// Converts a array to json array
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="data"></param>
+        public void AddArray(string name,object[] data)
+        {
+            var array = new JArray();
+
+            foreach (var item in data)
+            {
+                array.Add(JObject.FromObject(item));
+            }
+
+            Data[name] = array;
+        }
+
+        /// <summary>
+        /// Converts a list to json array
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="data"></param>
+        public void AddList(string name, IEnumerable<object> data)
+        {
+            var array = new JArray();
+
+            foreach (var item in data)
+            {
+                array.Add(JObject.FromObject(item));
+            }
+
+            Data[name] = array;
+        }
+    }
+}
