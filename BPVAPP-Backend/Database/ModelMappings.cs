@@ -15,27 +15,33 @@ namespace BPVAPP_Backend.Database
             Table("company_table");
             Id(i => i.Id);
             Map(i => i.Bedrijfsnaam).Length(255);
-            Map(i => i.Adres);
+            Map(i => i.Address);
             Map(i => i.Website).Default("0");
             Map(i => i.Plaats);
-            Map(i => i.PostCode);
+            Map(i => i.Postcode);
             Map(i => i.TelefoonNummer);
+            Map(i => i.ContactpersoonId);
+            Map(i => i.Straat);
+            Map(i => i.Opmerking);
             //Map(i => i.ContactPersoon_1);
             //Map(i => i.ContactPersoonEmail_1);
             //Map(i => i.ContactPersoon_2);
             //Map(i => i.ContactPersoonEmail_2);
-            Map(i => i.Opmerking);
+
         }
     }
 
-    public class CompanyLocationMapping : ClassMap<CompanyLocations>
+    public class LeerlingToCompanyLocationMapping : ClassMap<LeerlingToCompany>
     {
-        public CompanyLocationMapping()
+        public LeerlingToCompanyLocationMapping()
         {
             Table("company_location_table");
             Id(i => i.Id);
-            Map(i => i.Locatie).Length(255);
-            Map(i => i.BedrijfId);
+            Map(i => i.CompanyContactId).Length(255);
+            Map(i => i.CompanyId);
+            Map(i => i.Leerling);
+            Map(i => i.StageEnd);
+            Map(i => i.StageStart);
         }
     }
 
@@ -46,33 +52,35 @@ namespace BPVAPP_Backend.Database
         {
             Table("LeerlingModelTable");
             Id(i => i.Id).GeneratedBy.Identity();
-            Map(i => i.FirstName);
-            Map(i => i.LastName);
-            Map(i => i.BegeleiderId);
-            Map(i => i.Postcode);
+            Map(i => i.achternaam);
+            Map(i => i.adres);
             Map(i => i.Mail);
-            Map(i => i.Telephone);
             Map(i => i.Password);
-            Map(i => i.CatagoryId);
-            HasOne(i => i.Begeleider);
+            Map(i => i.Postcode);
+            Map(i => i.telefoonNr);
+            Map(i => i.tussenvoegsel);
+            Map(i => i.voornaam);
+            Map(i => i.woonplaats);
+            //Map(i => i.CatagoryId);
         }
     }
 
 
-    public class ProductModelMapping : ClassMap<StagebegeleiderModel>
+    public class CompanyContactModelMapping : ClassMap<CompanyContact>
     {
-        public ProductModelMapping()
+        public CompanyContactModelMapping()
         {
             Table("StagebegeleiderModelTable");
             Id(i => i.Id).GeneratedBy.Identity();
             Map(i => i.FirstName);
             Map(i => i.LastName);
-            Map(i => i.LeerlingId);
+            Map(i => i.BedrijfsId);
+            Map(i => i.BedrijfsId);
             Map(i => i.Mail);
             Map(i => i.Telephone);
             Map(i => i.Password);
-            Map(i => i.CatagoryId);
-            HasMany(i => i.leerlingen);
+            //Map(i => i.CatagoryId);
+            //HasMany(i => i.leerlingen);
         }
     }
 
