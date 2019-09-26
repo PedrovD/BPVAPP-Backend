@@ -15,7 +15,7 @@ namespace BPVAPP_Backend.Database
         private static ISessionFactory CreateSessionFactory()
         {
             return Fluently.Configure()
-                .Database(MySQLConfiguration.Standard.ConnectionString("")). // Pedro will place the connection string
+                .Database(MySQLConfiguration.Standard.ConnectionString("")).
                 Mappings(m => m.FluentMappings.AddFromAssemblyOf<LeerlingModel>()).
                 ExposeConfiguration(cfg => new SchemaUpdate(cfg).Execute(true, true)).
                 BuildSessionFactory();
