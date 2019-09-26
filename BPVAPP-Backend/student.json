@@ -1,0 +1,37 @@
+{
+"Studenten": [
+        {
+"studentNr": "0246853",
+"voornaam": "John",
+"tussenvoegsel": "van",
+"achternaam": "Uden",
+"woonplaats": "Oss",
+"adres": "Laan 28",
+"telefoonNr": "0248889965"
+        },
+        {
+"studentNr": "0148567",
+"voornaam": "Jan",
+"tussenvoegsel": "den",
+"achternaam": "Akker",
+"woonplaats": "Nijmegen",
+"adres": "Baan 4",
+"telefoonNr": "0249991234"
+        },
+        {
+"studentNr": "0342957",
+"voornaam": "Truus",
+"tussenvoegsel": "te",
+"achternaam": "Janssen",
+"woonplaats": "Wijchen",
+"adres": "Straat 19",
+"telefoonNr": "0247583215"
+        }
+  ]
+}
+
+
+
+
+
+

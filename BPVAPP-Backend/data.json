@@ -1,6 +1,7 @@
 {
     "Bedrijf": [
       {
+        "id" : "0",
         "bedrijfsNaam": "Adversitement BV",
         "adres": "Liessentstraat 9",
         "postcode": "5405 AH",
@@ -17,6 +18,7 @@
 
       },
       {
+        "id": "1",
         "bedrijfsNaam": "Aery",
         "adres": "Erflanden 4",
         "postcode": "5831 ZA",

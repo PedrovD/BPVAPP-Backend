@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPVAPP_Backend.Controllers
@@ -10,17 +6,29 @@ namespace BPVAPP_Backend.Controllers
     [Route("api/[controller]")]
     public class TempDataController : Controller
     {
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
+
+        public TempDataController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+        }
 
         [HttpGet]
+        [Route("companies")]
         public string Get()
         {
             var data = System.IO.File.ReadAllText("data.json");
             return data;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        [Route("students")]
+        public string Students()
         {
-            return View();
+            var data = System.IO.File.ReadAllText("student.json");
+            return data;
         }
     }
 }
