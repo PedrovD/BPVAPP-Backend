@@ -14,11 +14,16 @@ namespace BPVAPP_Backend.Database
 
         private static ISessionFactory CreateSessionFactory()
         {
-            return Fluently.Configure()
-                .Database(MySQLConfiguration.Standard.ConnectionString("Server=localhost; Port=3306; Database=bpvdb; Uid=dbuser_local; Pwd=OMgev{>>o>m(;")).
-                Mappings(m => m.FluentMappings.AddFromAssemblyOf<CompanyModel>()).
-                ExposeConfiguration(cfg => new SchemaUpdate(cfg).Execute(true, true)).
-                BuildSessionFactory();
+            var config = Fluently
+                .Configure()
+                .Database(MySQLConfiguration.Standard.ConnectionString(""))
+                .Mappings(m => m.FluentMappings.AddFromAssemblyOf<CompanyMapping>())
+                .BuildConfiguration();
+
+            var exporter = new SchemaUpdate(config);
+            exporter.Execute(false, true);
+
+            return config.BuildSessionFactory(); ;
         }
 
         public DbConnection()
@@ -70,7 +75,7 @@ namespace BPVAPP_Backend.Database
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="model"></param>
-        public void RemoveModel<T>(T model)
+        public void DeleteModel<T>(T model)
         {
             using (var ses = sessionFactory.OpenSession())
             {
