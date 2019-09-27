@@ -1,9 +1,7 @@
-﻿using BPVAPP_Backend.Database.Models;
-using FluentNHibernate.Mapping;
+﻿using FluentNHibernate.Mapping;
 
-namespace BPVAPP_Backend.Database
+namespace BPVAPP_Backend.Database.Models
 {
-
     public class CompanyMapping : ClassMap<CompanyModel>
     {
         public CompanyMapping()
@@ -18,9 +16,9 @@ namespace BPVAPP_Backend.Database
             Map(i => i.TelefoonNummer);
             Map(i => i.ContactPersoon_1);
             Map(i => i.ContactPersoonEmail_1);
-            Map(i => i.ContactPersoon_2).Default("N.v.t.");
-            Map(i => i.ContactPersoonEmail_2).Default("N.v.t.");
-            Map(i => i.Opmerking).Default("N.v.t.");
+            Map(i => i.ContactPersoon_2);
+            Map(i => i.ContactPersoonEmail_2);
+            Map(i => i.Opmerking);
         }
     }
 }
