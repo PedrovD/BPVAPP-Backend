@@ -25,15 +25,37 @@ namespace BPVAPP_Backend.Controllers
         {
             dbConnection.AddModel(model);
 
-            var rs = new ResponseModel {
-                Message = $"{model.Bedrijfsnaam} is toegevoegd"
+            var rs = new ResponseModel
+            {
+                Message = $"Bedrijf '{model.Bedrijfsnaam}' is toegevoegd"
             };
+            rs.Add("bedrijfId", model.Id);
 
             return Json(rs);
         }
 
         [HttpGet]
-        [Route("companyId/{id}")]
+        [Route("delete/{id}")]
+        public object DeleteCompanyById(int id)
+        {
+            var res = new ResponseModel();
+            var model = dbConnection.GetCompanyById(id);
+
+            if (model == null)
+            {
+                Response.StatusCode = 404;
+                res.Message = $"Bedrijf is niet gevonden";
+                return Json(res);
+            }
+
+            dbConnection.DeleteModel(model);
+            res.Message = "Bedrijf is verwijderd";
+            
+            return Json(res);
+        }
+
+        [HttpGet]
+        [Route("get/{id}")]
         public object GetCompanyById(int id)
         {
             var res = new ResponseModel();
@@ -43,11 +65,11 @@ namespace BPVAPP_Backend.Controllers
             if(model == null)
             {
                 Response.StatusCode = 404;
-                res.Message = $"Bedrijf met id {id} niet gevonden";
+                res.Message = $"Bedrijf is niet gevonden";
                 return Json(res);
             }
 
-            res.Message = $"Bedrijf met id {id} gevonden";
+            res.Message = $"Bedrijf gevonden";
             res.AddList("Bedrijf",new List<CompanyModel> { model });
 
             return Json(res);
