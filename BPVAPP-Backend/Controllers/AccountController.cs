@@ -40,7 +40,7 @@ namespace BPVAPP_Backend.Controllers
             };
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("register")]
         public async Task<object> CreateAccount(RegisterModel model)
         {
@@ -49,7 +49,7 @@ namespace BPVAPP_Backend.Controllers
             var identity = new IdentityUser
             {
                 Email = model.Email,
-                UserName = model.Email
+                UserName = model.UserName
             };
 
             var result = await _userManager.CreateAsync(identity, model.Password);
@@ -67,7 +67,7 @@ namespace BPVAPP_Backend.Controllers
             return Json(rs);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("login")]
         public async Task<object> Login(LoginModel model)
         {
@@ -88,6 +88,7 @@ namespace BPVAPP_Backend.Controllers
             {
                 var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
                 rs.Add("authToken", GenerateJwtToken(model.Email, appUser));
+                rs.Add("userName", user.UserName);
                 rs.Message = "Gebruiker gevonden";
                 return Json(rs);
             }
@@ -104,14 +105,17 @@ namespace BPVAPP_Backend.Controllers
         /// <param name="email"></param>
         /// <param name="user"></param>
         /// <returns></returns>
-        private string GenerateJwtToken(string email, IdentityUser user)
+        private async Task<string> GenerateJwtToken(string email, IdentityUser user)
         {
+            var roles = await _userManager.GetRolesAsync(user);
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Role, roles.ToString()),
             };
+
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
