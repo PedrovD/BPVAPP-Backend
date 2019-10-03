@@ -21,4 +21,25 @@ namespace BPVAPP_Backend.Database.Models
             Map(i => i.Opmerking);
         }
     }
+    public class StudentMapping : ClassMap<StudentModel>
+    {
+        public StudentMapping()
+        {
+            Table("student_table");
+            Id(i => i.Id);
+            Map(i => i.FrontName);
+            Map(i => i.LastName);
+            Map(i => i.StudentNumber);
+            Map(i => i.Class);
+        }
+    }
+    public class ClassMapping : ClassMap<ClassModel>
+    {
+        public ClassMapping()
+        {
+            Table("class_table");
+            Id(i => i.Id);
+            Map(i => i.Class);
+        }
+    }
 }
