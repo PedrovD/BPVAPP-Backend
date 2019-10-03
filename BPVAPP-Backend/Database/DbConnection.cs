@@ -16,7 +16,7 @@ namespace BPVAPP_Backend.Database
         {
             var config = Fluently
                 .Configure()
-                .Database(MySQLConfiguration.Standard.ConnectionString(""))
+                .Database(MySQLConfiguration.Standard.ConnectionString($"Server=localhost; Port=3306; Database=BPV_BACKEND; Uid=root; Pwd=;"))
                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<CompanyMapping>())
                 .BuildConfiguration();
 
@@ -94,6 +94,26 @@ namespace BPVAPP_Backend.Database
                 using (var trans = ses.BeginTransaction())
                 {
                     return ses.Query<CompanyModel>().Where(i => i.Id == id).FirstOrDefault();
+                }
+            }
+        }
+        public StudentModel GetStudentById(int id)
+        {
+            using (var ses = sessionFactory.OpenSession())
+            {
+                using (var trans = ses.BeginTransaction())
+                {
+                    return ses.Query<StudentModel>().Where(i => i.Id == id).FirstOrDefault();
+                }
+            }
+        }
+        public ClassModel GetClassById(int id)
+        {
+            using (var ses = sessionFactory.OpenSession())
+            {
+                using (var trans = ses.BeginTransaction())
+                {
+                    return ses.Query<ClassModel>().Where(i => i.Id == id).FirstOrDefault();
                 }
             }
         }
