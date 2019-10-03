@@ -9,8 +9,12 @@ namespace BPVAPP_Backend.Database.Models
     {
         public virtual int Id { get; set; }
         public virtual int StudentNumber { get; set; }
-        public virtual string FrontName { get; set; }
+        public virtual string FirstName { get; set; }
+        public virtual string TussenVoegsel { get; set; }
         public virtual string LastName { get; set; }
+        public virtual string Woonplaats { get; set; }
+        public virtual string Adres { get; set; }
         public virtual string Class { get; set; }
+        public virtual int PhoneNumber { get; set; }
     }
 }
