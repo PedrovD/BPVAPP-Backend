@@ -27,9 +27,12 @@ namespace BPVAPP_Backend.Database.Models
         {
             Table("student_table");
             Id(i => i.Id);
-            Map(i => i.FrontName);
-            Map(i => i.LastName);
             Map(i => i.StudentNumber);
+            Map(i => i.FirstName);
+            Map(i => i.TussenVoegsel);
+            Map(i => i.LastName);
+            Map(i => i.Woonplaats);
+            Map(i => i.Adres);
             Map(i => i.Class);
         }
     }
