@@ -20,6 +20,26 @@ namespace BPVAPP_Backend.Controllers
         }
 
         [HttpGet]
+        [Route("all")]
+        public object GetAll()
+        {
+            var res = new ResponseModel();
+            var companies = dbConnection.GetAllModels<CompanyModel>();
+
+            if (companies == null)
+            {
+                Response.StatusCode = 404;
+                res.Message = "Er ging iets fout";
+                return Json(res);
+            }
+
+            res.Message = $"{companies.Count} Bedrijven";
+            res.AddList("Bedrijf", companies);
+
+            return Json(res);
+        }
+
+        [HttpGet]
         [Route("add")]
         public object CreateCompany(CompanyModel model)
         {
