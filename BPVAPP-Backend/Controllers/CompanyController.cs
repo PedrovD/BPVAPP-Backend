@@ -40,6 +40,26 @@ namespace BPVAPP_Backend.Controllers
         }
 
         [HttpGet]
+        [Route("search/{query}")]
+        public object Search(string query)
+        {
+            var rs = new ResponseModel();
+
+            var result = dbConnection.SearchCompany(query);
+
+            if (result == null || result.Count == 0)
+            {
+                rs.Message = "Geen resultaat";
+                return Json(rs);
+            }
+
+            rs.Message = $"{result.Count} Gevonden";
+            rs.AddList("Bedrijf", result);
+
+            return Json(rs);
+        }
+
+        [HttpGet]
         [Route("add")]
         public object CreateCompany(CompanyModel model)
         {
