@@ -16,7 +16,7 @@ namespace BPVAPP_Backend.Database
         {
             var config = Fluently
                 .Configure()
-                .Database(MySQLConfiguration.Standard.ConnectionString($"Server=localhost; Port=3306; Database=BPV_BACKEND; Uid=root; Pwd=;"))
+                .Database(MySQLConfiguration.Standard.ConnectionString(""))
                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<CompanyMapping>())
                 .BuildConfiguration();
 
@@ -107,6 +107,44 @@ namespace BPVAPP_Backend.Database
                 }
             }
         }
+
+        public IList<StudentModel> SearchStudent(string query)
+        {
+            using (var ses = sessionFactory.OpenSession())
+            {
+                using (var trans = ses.BeginTransaction())
+                {
+                    int.TryParse(query,out var studentNumber);
+
+                    return ses.Query<StudentModel>().Where(i =>
+                    i.StudentNumber == studentNumber ||
+                    i.FirstName.Contains(query) ||
+                    i.TussenVoegsel.Contains(query) ||
+                    i.LastName.Contains(query) ||
+                    i.Class.Contains(query)
+                    ).ToList();
+                }
+            }
+        }
+
+        public IList<CompanyModel> SearchCompany(string query)
+        {
+            using (var ses = sessionFactory.OpenSession())
+            {
+                using (var trans = ses.BeginTransaction())
+                {
+                    return ses.Query<CompanyModel>().Where(i =>
+                    i.Bedrijfsnaam.Contains(query) ||
+                    i.Adres.Contains(query) ||
+                    i.ContactPersoon_1.Contains(query) ||
+                    i.ContactPersoon_2.Contains(query) ||
+                    i.PostCode.Contains(query) ||
+                    i.Plaats.Contains(query)
+                    ).ToList();
+                }
+            }
+        }
+
         public ClassModel GetClassById(int id)
         {
             using (var ses = sessionFactory.OpenSession())
