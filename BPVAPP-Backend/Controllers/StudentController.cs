@@ -35,6 +35,26 @@ namespace BPVAPP_Backend.Controllers
         }
 
         [HttpGet]
+        [Route("search/{query}")]
+        public object Search(string query)
+        {
+            var rs = new ResponseModel();
+
+            var result = dbConnection.SearchStudent(query);
+
+            if (result == null || result.Count == 0)
+            {
+                rs.Message = "Geen resultaat";
+                return Json(rs);
+            }
+
+            rs.Message = $"{result.Count} Gevonden";
+            rs.AddList("Student", result);
+
+            return Json(rs);
+        }
+
+        [HttpGet]
         [Route("get/{id}")]
         public object GetStudentById(int id)
         {
