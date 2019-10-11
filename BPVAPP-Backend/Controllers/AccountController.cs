@@ -42,7 +42,7 @@ namespace BPVAPP_Backend.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<object> CreateAccount(RegisterModel model)
+        public async Task<object> CreateAccount([FromBody]RegisterModel model)
         {
             var rs = new ResponseModel();
 
@@ -56,7 +56,6 @@ namespace BPVAPP_Backend.Controllers
 
             if (result.Succeeded)
             {
-                rs.Add("authToken", GenerateJwtToken(model.Email, identity));
                 rs.Message = "Gebruiker is toegevoegd";
                 return Json(rs);
             }
@@ -69,7 +68,7 @@ namespace BPVAPP_Backend.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<object> Login(LoginModel model)
+        public async Task<object> Login([FromBody]LoginModel model)
         {
             var rs = new ResponseModel();
 
@@ -87,7 +86,7 @@ namespace BPVAPP_Backend.Controllers
             if (login.Succeeded)
             {
                 var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
-                rs.Add("authToken", GenerateJwtToken(model.Email, appUser));
+                rs.Add("authToken", await GenerateJwtToken(model.Email, appUser));
                 rs.Add("userName", user.UserName);
                 rs.Message = "Gebruiker gevonden";
                 return Json(rs);
@@ -113,7 +112,7 @@ namespace BPVAPP_Backend.Controllers
                 new Claim(JwtRegisteredClaimNames.Sub, email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Role, roles.ToString()),
+                //new Claim(ClaimTypes.Role, roles.ToString()),
             };
 
 
