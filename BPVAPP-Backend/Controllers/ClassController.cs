@@ -23,6 +23,13 @@ namespace BPVAPP_Backend.Controllers
         [Route("add")]
         public object CreateClass(ClassModel model)
         {
+            if (string.IsNullOrEmpty(model.Class))
+            {
+                return Json(new ResponseModel {
+                    Message = "Velden niet ingevuld"
+                });
+            }
+
             dbConnection.AddModel(model);
             var rs = new ResponseModel
             {
@@ -73,6 +80,5 @@ namespace BPVAPP_Backend.Controllers
 
             return Json(res);
         }
-
     }
 }
