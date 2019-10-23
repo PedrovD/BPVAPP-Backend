@@ -2,8 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using BPVAPP_Backend.Database;
 using BPVAPP_Backend.Database.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using static BPVAPP_Backend.Utils.Validation;
 using BPVAPP_Backend.Response;
 using System.Collections.Generic;
 
@@ -21,7 +20,7 @@ namespace BPVAPP_Backend.Controllers
 
         [HttpPost]
         [Route("add")]
-        public object CreateStudent(StudentModel model)
+        public object CreateStudent([FromBody]StudentModel model)
         {
             dbConnection.AddModel(model);
 
@@ -41,6 +40,26 @@ namespace BPVAPP_Backend.Controllers
             var rs = new ResponseModel();
 
             var result = dbConnection.SearchStudent(query);
+
+            if (result == null || result.Count == 0)
+            {
+                rs.Message = "Geen resultaat";
+                return Json(rs);
+            }
+
+            rs.Message = $"{result.Count} Gevonden";
+            rs.AddList("Student", result);
+
+            return Json(rs);
+        }
+
+        [HttpGet]
+        [Route("get/class/{Class}")]
+        public object GetStudentsByClass(string Class)
+        {
+            var rs = new ResponseModel();
+
+            var result = dbConnection.GetStudentsByClass(Class);
 
             if (result == null || result.Count == 0)
             {
