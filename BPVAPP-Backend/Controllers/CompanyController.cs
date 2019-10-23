@@ -2,8 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using BPVAPP_Backend.Database;
 using BPVAPP_Backend.Database.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using static BPVAPP_Backend.Utils.Validation;
 using BPVAPP_Backend.Response;
 using System.Collections.Generic;
 
@@ -29,7 +28,7 @@ namespace BPVAPP_Backend.Controllers
             if (companies == null)
             {
                 Response.StatusCode = 404;
-                res.Message = "Er ging iets fout";
+                res.Message = "Geen bedrijven";
                 return Json(res);
             }
 
@@ -43,13 +42,14 @@ namespace BPVAPP_Backend.Controllers
         [Route("search/{query}")]
         public object Search(string query)
         {
-            var rs = new ResponseModel();
+            var rs = new ResponseModel();   
 
             var result = dbConnection.SearchCompany(query);
 
             if (result == null || result.Count == 0)
             {
                 rs.Message = "Geen resultaat";
+                rs.StatusCode = 404;
                 return Json(rs);
             }
 
@@ -59,9 +59,9 @@ namespace BPVAPP_Backend.Controllers
             return Json(rs);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("add")]
-        public object CreateCompany(CompanyModel model)
+        public object CreateCompany([FromBody]CompanyModel model)
         {
             dbConnection.AddModel(model);
 
@@ -84,6 +84,7 @@ namespace BPVAPP_Backend.Controllers
             if (model == null)
             {
                 Response.StatusCode = 404;
+                res.StatusCode = 404;
                 res.Message = $"Bedrijf is niet gevonden";
                 return Json(res);
             }
@@ -105,6 +106,7 @@ namespace BPVAPP_Backend.Controllers
             if(model == null)
             {
                 Response.StatusCode = 404;
+                res.StatusCode = 404;
                 res.Message = $"Bedrijf is niet gevonden";
                 return Json(res);
             }
