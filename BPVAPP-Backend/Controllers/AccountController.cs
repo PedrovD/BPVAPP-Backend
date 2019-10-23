@@ -35,9 +35,30 @@ namespace BPVAPP_Backend.Controllers
         [Route("verify")]
         public object IsAuthenticated()
         {
-            return new ResponseModel {
+            return Json(new ResponseModel
+            {
                 Message = "Je hebt toegang tot onze api"
-            };
+            });
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        [Route("admin")]
+        public object AdminCheck()
+        {
+            return Json(new ResponseModel {
+                Message = "Admin role werkt"
+            });
+        }
+
+        [Authorize(Roles = "Docent")]
+        [HttpGet]
+        [Route("docent")]
+        public object DocentCheck()
+        {
+            return Json(new ResponseModel {
+                Message = "Docent role werkt"
+            });
         }
 
         [HttpPost]
@@ -45,6 +66,22 @@ namespace BPVAPP_Backend.Controllers
         public async Task<object> CreateAccount([FromBody]RegisterModel model)
         {
             var rs = new ResponseModel();
+
+            if(string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password) || string.IsNullOrEmpty(model.UserName))
+            {
+                rs.Message = "Velden niet ingevuld";
+                return Json(rs);
+            }
+
+            var exist = await _userManager.FindByEmailAsync(model.Email);
+
+            if (exist != null)
+            {
+                rs.Message = $"{model.Email} bestaat all";
+                rs.StatusCode = 401;
+                Response.StatusCode = 401;
+                return Json(rs);
+            }
 
             var identity = new IdentityUser
             {
@@ -60,7 +97,7 @@ namespace BPVAPP_Backend.Controllers
                 return Json(rs);
             }
 
-            rs.Message = "Registratie is gefaald";
+            rs.Message = "Registratie is mislukt";
             rs.StatusCode = 401;
             Response.StatusCode = 401;
             return Json(rs);
@@ -78,7 +115,8 @@ namespace BPVAPP_Backend.Controllers
             {
                 rs.StatusCode = 404;
                 rs.Message = "Gebruiker niet gevonden";
-                return StatusCode(404, Json(rs));
+                Response.StatusCode = 404;
+                return Json(rs);
             }
 
             var login = await _signInManager.PasswordSignInAsync(user, model.Password,true,false);
@@ -91,7 +129,7 @@ namespace BPVAPP_Backend.Controllers
                 rs.Message = "Gebruiker gevonden";
                 return Json(rs);
             }
-
+            
             rs.Message = "Inloggen is mislukt";
             rs.StatusCode = 401;
             Response.StatusCode = 401;
@@ -112,9 +150,12 @@ namespace BPVAPP_Backend.Controllers
                 new Claim(JwtRegisteredClaimNames.Sub, email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-                //new Claim(ClaimTypes.Role, roles.ToString()),
             };
 
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
