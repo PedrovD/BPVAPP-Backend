@@ -14,6 +14,8 @@ namespace BPVAPP_Backend.Database.Models
             Map(i => i.Plaats);
             Map(i => i.PostCode);
             Map(i => i.TelefoonNummer);
+            Map(i => i.Capacity);
+            Map(i => i.CurrentCapacity);
             Map(i => i.ContactPersoon_1);
             Map(i => i.ContactPersoonEmail_1);
             Map(i => i.ContactPersoon_2);
@@ -32,6 +34,9 @@ namespace BPVAPP_Backend.Database.Models
             Table("student_table");
             Id(i => i.Id);
             Map(i => i.StudentNumber);
+            Map(i => i.HasInternship);
+            Map(i => i.StartDate);
+            Map(i => i.EndDate);
             Map(i => i.FirstName);
             Map(i => i.TussenVoegsel);
             Map(i => i.LastName);
