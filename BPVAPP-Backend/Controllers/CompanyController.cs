@@ -145,7 +145,7 @@ namespace BPVAPP_Backend.Controllers
                 rs.Message = "Bedrijf niet gevonden";
                 return Json(rs);
             }
-
+            dbConnection.SaveOrUpdateModel(model);
             rs.Message = "Opgeslagen!";
             return Json(rs);
         }
@@ -189,6 +189,30 @@ namespace BPVAPP_Backend.Controllers
 
             res.Message = $"Bedrijf gevonden";
             res.AddList("Bedrijf",new List<CompanyModel> { model });
+
+            return Json(res);
+        }
+
+        [Route("add/{id}")]
+        public object AddStudentToCompany(int id, [FromBody]StudentModel studentNummer)
+        {
+            var res = new ResponseModel();
+
+            var model = dbConnection.GetCompanyById(id);
+
+            var student = dbConnection.GetStudentByStdNumber(studentNummer.StudentNumber);
+
+            model.CurrentCapacity += $"{student.StudentNumber},";
+            if (model == null)
+            {
+                Response.StatusCode = 404;
+                res.StatusCode = 404;
+                res.Message = $"Bedrijf is niet gevonden";
+                return Json(res);
+            }
+
+            dbConnection.SaveOrUpdateModel(model);
+            res.Message = $"Student toegevoegd aan bedrijf!";
 
             return Json(res);
         }
