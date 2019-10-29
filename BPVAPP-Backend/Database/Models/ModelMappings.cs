@@ -18,7 +18,11 @@ namespace BPVAPP_Backend.Database.Models
             Map(i => i.ContactPersoonEmail_1);
             Map(i => i.ContactPersoon_2);
             Map(i => i.ContactPersoonEmail_2);
+            Map(i => i.Languages);
+            Map(i => i.FrameWorks);
             Map(i => i.Opmerking);
+            Map(i => i.Longitude);
+            Map(i => i.Latitude);
         }
     }
     public class StudentMapping : ClassMap<StudentModel>

@@ -14,5 +14,9 @@
         public virtual string ContactPersoon_2 { get; set; }
         public virtual string ContactPersoonEmail_2 { get; set; }
         public virtual string Opmerking { get; set; }
+        public virtual string Languages { get; set; }
+        public virtual string FrameWorks { get; set; }
+        public virtual string Longitude { get; set; }
+        public virtual string Latitude { get; set; }
     }
 }

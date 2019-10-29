@@ -22,7 +22,7 @@ namespace BPVAPP_Backend.Controllers
         [Route("add")]
         public object CreateStudent([FromBody]StudentModel model)
         {
-            dbConnection.AddModel(model);
+            dbConnection.SaveOrUpdateModel(model);
 
             var rs = new ResponseModel
             {
@@ -31,6 +31,48 @@ namespace BPVAPP_Backend.Controllers
             rs.Add("StudentId", model.Id);
 
             return Json(rs);
+        }
+
+        [HttpPost]
+        [Route("save")]
+        public object SaveStudent([FromBody]StudentModel model)
+        {
+            var rs = new ResponseModel();
+
+            var student = dbConnection.GetStudentById(model.Id);
+
+            if (student == null)
+            {
+                Response.StatusCode = 404;
+                rs.Message = "Student niet gevonden";
+                return Json(rs);
+            }
+
+            dbConnection.SaveOrUpdateModel(model);
+
+            rs.Message = "Opgeslagen!";
+            return Json(rs);
+        }
+
+        [HttpGet]
+        [Route("delete/{id}")]
+        public object DeleteStudentById(int id)
+        {
+            var res = new ResponseModel();
+            var model = dbConnection.GetStudentById(id);
+
+            if (model == null)
+            {
+                Response.StatusCode = 404;
+                res.StatusCode = 404;
+                res.Message = $"Leerling is niet gevonden";
+                return Json(res);
+            }
+
+            dbConnection.DeleteModel(model);
+            res.Message = "Leerling is verwijderd";
+
+            return Json(res);
         }
 
         [HttpGet]

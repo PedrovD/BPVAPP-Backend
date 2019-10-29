@@ -44,7 +44,14 @@ namespace BPVAPP_Backend.Response
 
             foreach (var item in data)
             {
-                array.Add(JObject.FromObject(item));
+                if (item is string)
+                {
+                    array.Add(item);
+                }
+                else
+                {
+                    array.Add(JObject.FromObject(item));
+                }
             }
 
             Data[name] = array;
@@ -61,7 +68,14 @@ namespace BPVAPP_Backend.Response
 
             foreach (var item in data)
             {
-                array.Add(JObject.FromObject(item));
+                if (item is string)
+                {
+                    array.Add(item);
+                }
+                else
+                {
+                    array.Add(JObject.FromObject(item));
+                }
             }
 
             Data[name] = array;

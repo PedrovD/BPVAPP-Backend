@@ -30,7 +30,7 @@ namespace BPVAPP_Backend.Controllers
                 });
             }
 
-            dbConnection.AddModel(model);
+            dbConnection.SaveOrUpdateModel(model);
             var rs = new ResponseModel
             {
                 Message = $"Student '{model.Class}' is toegevoegd"
