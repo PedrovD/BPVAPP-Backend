@@ -58,7 +58,7 @@ namespace BPVAPP_Backend.Database
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="model"></param>
-        public void AddModel<T>(T model)
+        public void SaveOrUpdateModel<T>(T model)
         {
             using (var ses = sessionFactory.OpenSession())
             {
@@ -108,6 +108,22 @@ namespace BPVAPP_Backend.Database
             }
         }
 
+        public IList<StudentModel> GetStudentsByClass(string classname)
+        {
+            using (var ses = sessionFactory.OpenSession())
+            {
+                using (var trans = ses.BeginTransaction())
+                {
+                    var model = ses.Query<ClassModel>().Where(i => i.Class.Equals(classname)).FirstOrDefault();
+
+                    if (model == null)
+                        return new List<StudentModel>();
+
+                    return ses.Query<StudentModel>().Where(i => i.Class.Equals(model.Class)).ToList();
+                }
+            }
+        }
+
         public IList<StudentModel> SearchStudent(string query)
         {
             using (var ses = sessionFactory.OpenSession())
@@ -121,8 +137,7 @@ namespace BPVAPP_Backend.Database
                     i.FirstName.Contains(query) ||
                     i.TussenVoegsel.Contains(query) ||
                     i.LastName.Contains(query) ||
-                    i.Class.Contains(query)
-                    ).ToList();
+                    i.Class.Contains(query)).ToList();
                 }
             }
         }
@@ -135,12 +150,10 @@ namespace BPVAPP_Backend.Database
                 {
                     return ses.Query<CompanyModel>().Where(i =>
                     i.Bedrijfsnaam.Contains(query) ||
-                    i.Adres.Contains(query) ||
-                    i.ContactPersoon_1.Contains(query) ||
-                    i.ContactPersoon_2.Contains(query) ||
                     i.PostCode.Contains(query) ||
-                    i.Plaats.Contains(query)
-                    ).ToList();
+                    i.Plaats.Contains(query) ||
+                    i.FrameWorks.Contains(query) ||
+                    i.Languages.Contains(query)).ToList();
                 }
             }
         }
