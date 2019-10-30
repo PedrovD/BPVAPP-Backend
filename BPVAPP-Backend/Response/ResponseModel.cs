@@ -30,7 +30,26 @@ namespace BPVAPP_Backend.Response
         /// <param name="value"></param>
         public void Add(string name, object value)
         {
-            Data[name] = value.ToString();
+            if (value == null)
+            {
+                Data[name] = "null";
+            }
+            else
+            {
+                Data[name] = value.ToString();
+            }
+        }
+
+        public void AddObject(string name, object value)
+        {
+            if (value == null)
+            {
+                Data[name] = "null";
+            }
+            else
+            {
+                Data[name] = JObject.FromObject(value);
+            }
         }
 
         /// <summary>
