@@ -194,15 +194,16 @@ namespace BPVAPP_Backend.Controllers
         }
 
         [Route("add/{id}")]
-        public object AddStudentToCompany(int id, [FromBody]StudentModel studentNummer)
+        public object AddStudentToCompany(int id, [FromBody]StudentModel Student)
         {
             var res = new ResponseModel();
 
             var model = dbConnection.GetCompanyById(id);
 
-            var student = dbConnection.GetStudentByStdNumber(studentNummer.StudentNumber);
+            var student = dbConnection.GetStudentByStdNumber(Student.StudentNumber);
 
-            model.CurrentCapacity += $"{student.StudentNumber},";
+            model.CurrentInterns++;
+            model.StdNumbers += $"{student.StudentNumber},";
             if (model == null)
             {
                 Response.StatusCode = 404;
@@ -211,6 +212,7 @@ namespace BPVAPP_Backend.Controllers
                 return Json(res);
             }
 
+            dbConnection.SaveOrUpdateModel(student);
             dbConnection.SaveOrUpdateModel(model);
             res.Message = $"Student toegevoegd aan bedrijf!";
 

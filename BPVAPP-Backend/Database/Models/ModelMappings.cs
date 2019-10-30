@@ -15,7 +15,8 @@ namespace BPVAPP_Backend.Database.Models
             Map(i => i.PostCode);
             Map(i => i.TelefoonNummer);
             Map(i => i.Capacity);
-            Map(i => i.CurrentCapacity);
+            Map(i => i.CurrentInterns);
+            Map(i => i.StdNumbers);
             Map(i => i.ContactPersoon_1);
             Map(i => i.ContactPersoonEmail_1);
             Map(i => i.ContactPersoon_2);
