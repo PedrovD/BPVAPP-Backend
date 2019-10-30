@@ -17,15 +17,15 @@ namespace BPVAPP_Backend.Utils
             return true;
         }
 
-        public static bool IsValidStudent(StudentModel model)
-        {
-            if (model.StudentNumber == 0) return false;
-            if (string.IsNullOrEmpty(model.FirstName)) return false;
-            if (string.IsNullOrEmpty(model.TussenVoegsel)) return false;
-            if (string.IsNullOrEmpty(model.LastName)) return false;
-            if (string.IsNullOrEmpty(model.Woonplaats)) return false;
-            if (string.IsNullOrEmpty(model.Adres)) return false;
-            return true;
-        }
+        //public static bool IsValidStudent(StudentModel model)
+        //{
+        //    if (model.StudentNumber == 0) return false;
+        //    if (string.IsNullOrEmpty(model.FirstName)) return false;
+        //    if (string.IsNullOrEmpty(model.TussenVoegsel)) return false;
+        //    if (string.IsNullOrEmpty(model.LastName)) return false;
+        //    if (string.IsNullOrEmpty(model.Woonplaats)) return false;
+        //    if (string.IsNullOrEmpty(model.Adres)) return false;
+        //    return true;
+        //}
     }
 }
