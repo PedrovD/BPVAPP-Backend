@@ -6,6 +6,9 @@ using static BPVAPP_Backend.Utils.Validation;
 using BPVAPP_Backend.Response;
 using System.Collections.Generic;
 using BPVAPP_Backend.Utils;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace BPVAPP_Backend.Controllers
 {
@@ -39,7 +42,7 @@ namespace BPVAPP_Backend.Controllers
             return Json(res);
         }
 
-       /* [HttpGet]
+        /*[HttpGet] // If you ever uncomment and call this function, i will hunt you down and kill you :)
         [Route("updategeo")]
         public object UpdateGeolocation()
         {
@@ -57,7 +60,9 @@ namespace BPVAPP_Backend.Controllers
 
             foreach (var company in companies)
             {
-                var loc = MapQuestHelper.GetGeoLocation(company.Adres);
+                if (string.IsNullOrEmpty(company.Adres) || string.IsNullOrEmpty(company.Plaats)) continue;
+
+                var loc = MapQuestHelper.GetGeoLocationGoogle($"{company.Adres.Trim()} {company.Plaats.Trim()}");
 
                 if (loc == null) continue;
 
@@ -65,7 +70,6 @@ namespace BPVAPP_Backend.Controllers
                 company.Latitude = loc.Latitude;
 
                 dbConnection.SaveOrUpdateModel(company);
-
             }
 
             rs.Message = "Geslaagd!";
@@ -119,6 +123,19 @@ namespace BPVAPP_Backend.Controllers
         [Route("add")]
         public object CreateCompany([FromBody]CompanyModel model)
         {
+            var loc = MapQuestHelper.GetGeoLocationGoogle($"{model.Adres.Trim()} {model.Plaats.Trim()}");
+
+            if (loc == null)
+            {
+                model.Latitude = "null";
+                model.Longitude = "null";
+            }
+            else
+            {
+                model.Latitude = loc.Latitude;
+                model.Longitude = loc.Longitude;
+            }
+
             dbConnection.SaveOrUpdateModel(model);
 
             var rs = new ResponseModel
@@ -137,6 +154,16 @@ namespace BPVAPP_Backend.Controllers
             var rs = new ResponseModel();
 
             var company = dbConnection.GetCompanyById(model.Id);
+
+            var loc = MapQuestHelper.GetGeoLocationGoogle($"{model.Adres.Trim()} {model.Plaats.Trim()}");
+
+            if (loc == null)
+            {
+                model.Adres = company.Adres;
+                model.Plaats = company.Plaats;
+            }
+
+            dbConnection.SaveOrUpdateModel(model);
 
             if (company == null)
             {
@@ -193,20 +220,6 @@ namespace BPVAPP_Backend.Controllers
             return Json(res);
         }
 
-
-        [NonAction]
-        private List<string> FetchAddresList(List<CompanyModel> companies)
-        {
-            var list = new List<string>();
-            foreach (var company in companies)
-            {
-                if (string.IsNullOrEmpty(company.Plaats) || string.IsNullOrEmpty(company.Adres)) continue;
-
-                list.Add($"{company.Adres.Trim()} {company.Plaats.Trim()}");
-            }
-            return list;
-        }
-
         [NonAction]
         private List<GeoLocation> FetchGeoLocations(List<CompanyModel> companies)
         {
@@ -214,25 +227,17 @@ namespace BPVAPP_Backend.Controllers
 
             foreach (var comp in companies)
             {
-                if (string.IsNullOrEmpty(comp.Latitude) || string.IsNullOrEmpty(comp.Longitude)) continue;
+                if (string.IsNullOrEmpty(comp.Latitude) || 
+                    string.IsNullOrEmpty(comp.Longitude)||
+                    comp.Latitude.Equals("null") ||
+                    comp.Longitude.Equals("null")) continue;
 
                 list.Add(new GeoLocation {
-                    Latitude = comp.Latitude,
-                    Longitude = comp.Longitude
+                    Latitude = comp.Latitude.Replace(",","."),
+                    Longitude = comp.Longitude.Replace(",", ".")
                 });
             }
 
-            return list;
-        }
-
-        [NonAction]
-        private List<string> FetchStatusList(List<CompanyModel> companies)
-        {
-            var list = new List<string>();
-            foreach (var company in companies)
-            {
-                list.Add("Geen");
-            }
             return list;
         }
     }
