@@ -8,7 +8,7 @@ namespace BPVAPP_Backend.Database.Models
     public class StudentModel
     {
         public virtual int Id { get; set; }
-        public virtual int StudentNumber { get; set; }
+        public virtual string StudentNumber { get; set; }
         public virtual string FirstName { get; set; }
         public virtual string TussenVoegsel { get; set; }
         public virtual string LastName { get; set; }
