@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,10 +23,61 @@ namespace BPVAPP_Backend.Utils
             return Get(address);
         }
 
-        public static string ErrorMessage { get; private set; } = "";
+        public static GeoLocation GetGeoLocationGoogle(string address)
+        {
+            ErrorMessage = string.Empty;
+            Success = false;
+            return GetGoogle(address);
+        }
+
+        public static object ErrorMessage { get; private set; } = "";
 
         public static bool Success { get; private set; } = false;
 
+        private static GeoLocation GetGoogle(string addres)
+        {
+            var key = "AIzaSyBxivCXKvjDevE0puAhsCHfJGDUmmzkVqk";
+            var url = $@"https://maps.googleapis.com/maps/api/geocode/json?address={addres.Replace(" ","")}&key={key}&country=NL";
+            try
+            {
+                var request = (HttpWebRequest)WebRequest.Create(url); // Send the API call
+                request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+                // Handles response
+                using (var res = (HttpWebResponse)request.GetResponse())
+                using (var strm = res.GetResponseStream())
+                using (var reader = new StreamReader(strm))
+                {
+                    // Data is given back in JSON formar
+                    var response = JsonConvert.DeserializeObject(reader.ReadToEnd());
+
+                    var json = JObject.FromObject(response);
+
+                    // Checks if we got an error back
+                    if (json["status"].ToString() != "OK")
+                    {
+                        Success = false;
+                        ErrorMessage = "Response Code: not oke";
+                        return null;
+                    }
+
+                    return new GeoLocation
+                    {
+                        Latitude = json["results"][0]["geometry"]["location"]["lat"].ToString().Replace(",","."),
+                        Longitude = json["results"][0]["geometry"]["location"]["lng"].ToString().Replace(",", ".")
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                ErrorMessage = e.ToString();
+                Success = false;
+                return new GeoLocation {
+                    Latitude = "null",
+                    Longitude = "null"
+                };
+            }
+        }
 
         /// <summary>
         /// Makes an API request to mapquestapi to get the geo locationof an adress
@@ -35,8 +87,6 @@ namespace BPVAPP_Backend.Utils
         {
             var key = "h9HsdxSmGwHRFNhbCR6oGp5fbs2nbYRJ"; // API key 
             var url = $@"https://www.mapquestapi.com/geocoding/v1/address?key={key}&location='{addres}'"; // Search URL
-            var lat = string.Empty;
-            var lon = string.Empty;
 
 
             // Some fancy http request magic
@@ -82,8 +132,8 @@ namespace BPVAPP_Backend.Utils
                     var dataIwant = JObject.Parse(locations[0].ToString())["displayLatLng"];
 
                     // Data that gets stored in database
-                    lat = dataIwant["lat"].ToString().Replace(",", "."); // The reason , is replaced by . is because other wise when you open maps and pass in the values with , it will bring you to same plaace over and over again (random place in belguim)
-                    lon = dataIwant["lng"].ToString().Replace(",", ".");
+                    var lat = dataIwant["lat"].ToString().Replace(",", "."); // The reason , is replaced by . is because other wise when you open maps and pass in the values with , it will bring you to same plaace over and over again (random place in belguim)
+                    var lon = dataIwant["lng"].ToString().Replace(",", ".");
 
                     Success = true;
 
