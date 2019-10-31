@@ -212,14 +212,22 @@ namespace BPVAPP_Backend.Controllers
                 res.Message = $"Bedrijf is niet gevonden";
                 return Json(res);
             }
-
+            var studentsList = new List<StudentModel>();
             res.Message = $"Bedrijf gevonden";
             res.AddList("Bedrijf",new List<CompanyModel> { model });
 
             if (model.StdNumbers != null)
             {
                 var students = model.StdNumbers.Split(",");
-                res.AddList("Leerlingen", students);
+                for (int i = 0; i < students.Length; i++)
+                {
+                    if (!string.IsNullOrEmpty(students[i]))
+                    {
+                        var student = dbConnection.GetStudentByStudentNumber(students[i]);
+                        studentsList.Add(student);
+                    }
+                }
+                res.AddList("Studenten", studentsList);
             }
 
             return Json(res);
