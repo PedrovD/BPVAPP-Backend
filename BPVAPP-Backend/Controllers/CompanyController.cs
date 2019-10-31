@@ -2,13 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using BPVAPP_Backend.Database;
 using BPVAPP_Backend.Database.Models;
-using static BPVAPP_Backend.Utils.Validation;
 using BPVAPP_Backend.Response;
 using System.Collections.Generic;
 using BPVAPP_Backend.Utils;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace BPVAPP_Backend.Controllers
 {
@@ -55,7 +51,7 @@ namespace BPVAPP_Backend.Controllers
                 rs.Message = "Geen bedrijven";
                 return Json(rs);
             }
-
+            // This will take like 2-3 min to complete
             foreach (var company in companies)
             {
                 if (string.IsNullOrEmpty(company.Adres) || string.IsNullOrEmpty(company.Plaats)) continue;
@@ -121,17 +117,20 @@ namespace BPVAPP_Backend.Controllers
         [Route("add")]
         public object CreateCompany([FromBody]CompanyModel model)
         {
-            var loc = MapQuestHelper.GetGeoLocationGoogle($"{model.Adres.Trim()} {model.Plaats.Trim()}");
+            if (!string.IsNullOrEmpty(model.Adres) && !string.IsNullOrEmpty(model.Plaats))
+            {
+                var loc = MapQuestHelper.GetGeoLocationGoogle($"{model.Adres.Trim()} {model.Plaats.Trim()}");
 
-            if (loc == null)
-            {
-                model.Latitude = "null";
-                model.Longitude = "null";
-            }
-            else
-            {
-                model.Latitude = loc.Latitude;
-                model.Longitude = loc.Longitude;
+                if (loc == null)
+                {
+                    model.Latitude = "null";
+                    model.Longitude = "null";
+                }
+                else
+                {
+                    model.Latitude = loc.Latitude;
+                    model.Longitude = loc.Longitude;
+                }
             }
 
             dbConnection.SaveOrUpdateModel(model);
@@ -153,12 +152,15 @@ namespace BPVAPP_Backend.Controllers
 
             var company = dbConnection.GetCompanyById(model.Id);
 
-            var loc = MapQuestHelper.GetGeoLocationGoogle($"{model.Adres.Trim()} {model.Plaats.Trim()}");
-
-            if (loc == null)
+            if (!string.IsNullOrEmpty(model.Adres) && !string.IsNullOrEmpty(model.Plaats))
             {
-                model.Adres = company.Adres;
-                model.Plaats = company.Plaats;
+                var loc = MapQuestHelper.GetGeoLocationGoogle($"{model.Adres.Trim()} {model.Plaats.Trim()}");
+
+                if (loc == null)
+                {
+                    model.Adres = company.Adres;
+                    model.Plaats = company.Plaats;
+                }
             }
 
             dbConnection.SaveOrUpdateModel(model);
@@ -213,6 +215,7 @@ namespace BPVAPP_Backend.Controllers
 
             res.Message = $"Bedrijf gevonden";
             res.AddList("Bedrijf",new List<CompanyModel> { model });
+
             if (model.StdNumbers != null)
             {
                 var students = model.StdNumbers.Split(",");
@@ -222,14 +225,13 @@ namespace BPVAPP_Backend.Controllers
             return Json(res);
         }
 
+        [HttpPost]
         [Route("add/{id}")]
         public object AddStudentToCompany(int id, [FromBody]StudentModel Student)
         {
             var res = new ResponseModel();
 
             var model = dbConnection.GetCompanyById(id);
-
-            var student = dbConnection.GetStudentByStdNumber(Student.StudentNumber);
             if (model == null)
             {
                 Response.StatusCode = 404;
@@ -237,10 +239,20 @@ namespace BPVAPP_Backend.Controllers
                 res.Message = $"Bedrijf is niet gevonden";
                 return Json(res);
             }
+
+            var student = dbConnection.GetStudentByStudentNumber(Student.StudentNumber);
+            if (student == null)
+            {
+                Response.StatusCode = 404;
+                res.StatusCode = 404;
+                res.Message = $"Student is niet gevonden";
+                return Json(res);
+            }
+
             if (model.Capacity > model.CurrentInterns)
             {
                 model.CurrentInterns++;
-                student.HasInternship = true;
+                student.HasInternship = "Ja";
                 model.StdNumbers += $"{student.StudentNumber},";
             }
 
@@ -261,11 +273,15 @@ namespace BPVAPP_Backend.Controllers
                 if (string.IsNullOrEmpty(comp.Latitude) || 
                     string.IsNullOrEmpty(comp.Longitude)||
                     comp.Latitude.Equals("null") ||
-                    comp.Longitude.Equals("null")) continue;
+                    comp.Longitude.Equals("null") ||
+                    string.IsNullOrEmpty(comp.Bedrijfsnaam) ||
+                    string.IsNullOrEmpty($"{comp.Adres.Trim()} {comp.Plaats.Trim()} {comp.PostCode.Trim()}")) continue;
 
                 list.Add(new GeoLocation {
+                    CompanyName = comp.Bedrijfsnaam,
                     Latitude = comp.Latitude.Replace(",","."),
-                    Longitude = comp.Longitude.Replace(",", ".")
+                    Longitude = comp.Longitude.Replace(",", "."),
+                    CompanyAdres = $"{comp.Adres.Trim()} {comp.Plaats.Trim()} {comp.PostCode.Trim()}"
                 });
             }
 
