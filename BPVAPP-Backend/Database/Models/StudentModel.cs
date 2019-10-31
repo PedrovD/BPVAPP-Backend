@@ -16,7 +16,7 @@ namespace BPVAPP_Backend.Database.Models
         public virtual string Adres { get; set; }
         public virtual string Class { get; set; }
         public virtual string PhoneNumber { get; set; }
-        public virtual bool HasInternship { get; set; }
+        public virtual string HasInternship { get; set; }
         public virtual DateTime StartDate { get; set; }
         public virtual DateTime EndDate { get; set; }
     }
