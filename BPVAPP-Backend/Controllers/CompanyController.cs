@@ -163,8 +163,6 @@ namespace BPVAPP_Backend.Controllers
                 }
             }
 
-            dbConnection.SaveOrUpdateModel(model);
-
             if (company == null)
             {
                 Response.StatusCode = 404;
@@ -172,6 +170,7 @@ namespace BPVAPP_Backend.Controllers
                 rs.Message = "Bedrijf niet gevonden";
                 return Json(rs);
             }
+
             dbConnection.SaveOrUpdateModel(model);
             rs.Message = "Opgeslagen!";
             return Json(rs);
@@ -203,9 +202,9 @@ namespace BPVAPP_Backend.Controllers
         public object GetCompanyById(int id)
         {
             var res = new ResponseModel();
-            var model = dbConnection.GetCompanyById(id);
+            var company = dbConnection.GetCompanyById(id);
 
-            if (model == null)
+            if (company == null)
             {
                 Response.StatusCode = 404;
                 res.StatusCode = 404;
@@ -214,11 +213,11 @@ namespace BPVAPP_Backend.Controllers
             }
             var studentsList = new List<StudentModel>();
             res.Message = $"Bedrijf gevonden";
-            res.AddList("Bedrijf",new List<CompanyModel> { model });
+            res.AddList("Bedrijf",new List<CompanyModel> { company });
 
-            if (model.StdNumbers != null)
+            if (!string.IsNullOrEmpty(company.StdNumbers))
             {
-                var students = model.StdNumbers.Split(",");
+                var students = company.StdNumbers.Split(",");
                 for (int i = 0; i < students.Length; i++)
                 {
                     if (!string.IsNullOrEmpty(students[i]))
@@ -235,12 +234,12 @@ namespace BPVAPP_Backend.Controllers
 
         [HttpPost]
         [Route("add/{id}")]
-        public object AddStudentToCompany(int id, [FromBody]StudentModel Student)
+        public object AddStudentToCompany(int id, [FromBody]AddIntersModel inters)
         {
             var res = new ResponseModel();
 
-            var model = dbConnection.GetCompanyById(id);
-            if (model == null)
+            var company = dbConnection.GetCompanyById(id);
+            if (company == null)
             {
                 Response.StatusCode = 404;
                 res.StatusCode = 404;
@@ -248,25 +247,58 @@ namespace BPVAPP_Backend.Controllers
                 return Json(res);
             }
 
-            var student = dbConnection.GetStudentByStudentNumber(Student.StudentNumber);
-            if (student == null)
+            if (company.CurrentInterns >= company.Capacity)
             {
-                Response.StatusCode = 404;
-                res.StatusCode = 404;
-                res.Message = $"Student is niet gevonden";
+                res.Message = "Bedrijf zit vol!";
                 return Json(res);
             }
 
-            if (model.Capacity > model.CurrentInterns)
+            var studentlist = new List<StudentModel>();
+
+            for (var i = 0; i < inters.Students.Length; i++)
             {
-                model.CurrentInterns++;
-                student.HasInternship = "Ja";
-                model.StdNumbers += $"{student.StudentNumber},";
+                var std = dbConnection.GetStudentByStudentNumber(inters.Students[i]);
+
+                if (std == null) continue;
+                if (company.StdNumbers.Contains(inters.Students[i])) continue;
+                if (string.IsNullOrEmpty(inters.StartDates[i]) || string.IsNullOrEmpty(inters.EndDates[i])) continue;
+
+                DateTime.TryParse(inters.StartDates[i], out var start);
+                DateTime.TryParse(inters.EndDates[i], out var end);
+
+                std.StartDate = start;
+                std.EndDate = end;
+
+                studentlist.Add(std);
             }
 
-            dbConnection.SaveOrUpdateModel(student);
-            dbConnection.SaveOrUpdateModel(model);
-            res.Message = $"Student toegevoegd aan bedrijf!";
+            if (studentlist.Count == 0)
+            {
+                Response.StatusCode = 404;
+                res.StatusCode = 404;
+                res.Message = $"{(inters.Students.Length > 1 ? "Studenten zijn niet gevonden of lopen al stage bij dit bedrijf" : "Student is niet gevonden of loopt al stage bij dit bedrijf")}";
+                return Json(res);
+            }
+
+            if(string.IsNullOrEmpty(company.StdNumbers))
+            {
+                company.StdNumbers = string.Empty;
+            }
+
+            for (var i = 0; i < studentlist.Count; i++)
+            {
+                if (!(company.CurrentInterns >= company.Capacity))
+                {
+                    company.CurrentInterns++;
+                    company.StdNumbers += $"{(company.StdNumbers.Length > 1 ? $",{studentlist[i].StudentNumber}" : $"{studentlist[i].StudentNumber}")}";
+                    studentlist[i].HasInternship = "Ja";
+
+                    dbConnection.SaveOrUpdateModel(company);
+                    dbConnection.SaveOrUpdateModel(studentlist[i]);
+                }
+            }
+
+            res.Message = $"{(studentlist.Count > 1 ? "Studenten zijn gekoppeld aan bedrijf" : "Student is gekoppeld aan bedrijf")}";
 
             return Json(res);
         }
