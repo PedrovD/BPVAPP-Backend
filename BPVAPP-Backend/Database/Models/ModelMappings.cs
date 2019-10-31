@@ -35,7 +35,7 @@ namespace BPVAPP_Backend.Database.Models
             Table("student_table");
             Id(i => i.Id);
             Map(i => i.StudentNumber);
-            Map(i => i.HasInternship);
+            Map(i => i.HasInternship).Default("Nee");
             Map(i => i.StartDate);
             Map(i => i.EndDate);
             Map(i => i.FirstName);
