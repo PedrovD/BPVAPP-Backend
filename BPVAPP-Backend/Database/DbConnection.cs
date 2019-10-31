@@ -133,11 +133,22 @@ namespace BPVAPP_Backend.Database
                     int.TryParse(query,out var studentNumber);
 
                     return ses.Query<StudentModel>().Where(i =>
-                    i.StudentNumber == studentNumber ||
+                    i.StudentNumber == studentNumber.ToString() ||
                     i.FirstName.Contains(query) ||
                     i.TussenVoegsel.Contains(query) ||
                     i.LastName.Contains(query) ||
                     i.Class.Contains(query)).ToList();
+                }
+            }
+        }
+
+        public StudentModel GetStudentByStudentNumber(string number)
+        {
+            using (var ses = sessionFactory.OpenSession())
+            {
+                using (var trans = ses.BeginTransaction())
+                {
+                    return ses.Query<StudentModel>().Where(i => i.StudentNumber.Equals(number)).FirstOrDefault();
                 }
             }
         }
