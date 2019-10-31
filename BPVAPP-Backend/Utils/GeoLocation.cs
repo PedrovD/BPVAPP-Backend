@@ -7,9 +7,10 @@ namespace BPVAPP_Backend.Utils
 {
     public class GeoLocation
     {
+        public string CompanyName { get; set; } = "NULL";
         public string Longitude { get; set; } = "NULL";
-
         public string Latitude { get; set; } = "NULL";
+        public string CompanyAdres { get; set; } = "NULL";
 
     }
 }

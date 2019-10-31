@@ -30,37 +30,6 @@ namespace BPVAPP_Backend.Controllers
             _configuration = configuration;
         }
 
-        [Authorize]
-        [HttpGet]
-        [Route("verify")]
-        public object IsAuthenticated()
-        {
-            return Json(new ResponseModel
-            {
-                Message = "Je hebt toegang tot onze api"
-            });
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpGet]
-        [Route("admin")]
-        public object AdminCheck()
-        {
-            return Json(new ResponseModel {
-                Message = "Admin role werkt"
-            });
-        }
-
-        [Authorize(Roles = "Docent")]
-        [HttpGet]
-        [Route("docent")]
-        public object DocentCheck()
-        {
-            return Json(new ResponseModel {
-                Message = "Docent role werkt"
-            });
-        }
-
         [HttpPost]
         [Route("register")]
         public async Task<object> CreateAccount([FromBody]RegisterModel model)
@@ -142,6 +111,7 @@ namespace BPVAPP_Backend.Controllers
         /// <param name="email"></param>
         /// <param name="user"></param>
         /// <returns></returns>
+        [NonAction]
         private async Task<string> GenerateJwtToken(string email, IdentityUser user)
         {
             var roles = await _userManager.GetRolesAsync(user);
