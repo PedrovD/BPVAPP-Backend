@@ -16,7 +16,7 @@ namespace BPVAPP_Backend.Database.Models
             Map(i => i.TelefoonNummer);
             Map(i => i.Capacity);
             Map(i => i.CurrentInterns);
-            Map(i => i.StdNumbers);
+            Map(i => i.StdNumbers).Default(string.Empty);
             Map(i => i.ContactPersoon_1);
             Map(i => i.ContactPersoonEmail_1);
             Map(i => i.ContactPersoon_2);
@@ -42,6 +42,7 @@ namespace BPVAPP_Backend.Database.Models
             Map(i => i.TussenVoegsel);
             Map(i => i.LastName);
             Map(i => i.Woonplaats);
+            Map(i => i.PhoneNumber);
             Map(i => i.Adres);
             Map(i => i.Class);
         }
