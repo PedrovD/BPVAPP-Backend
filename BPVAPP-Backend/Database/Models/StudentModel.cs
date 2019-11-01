@@ -7,6 +7,7 @@ namespace BPVAPP_Backend.Database.Models
 {
     public class StudentModel
     {
+
         public virtual int Id { get; set; }
         public virtual string StudentNumber { get; set; }
         public virtual string FirstName { get; set; }
@@ -19,5 +20,6 @@ namespace BPVAPP_Backend.Database.Models
         public virtual string HasInternship { get; set; }
         public virtual DateTime StartDate { get; set; }
         public virtual DateTime EndDate { get; set; }
+
     }
 }
