@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using BPVAPP_Backend.Database;
 using BPVAPP_Backend.Database.Models;
-using static BPVAPP_Backend.Utils.Validation;
 using BPVAPP_Backend.Response;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BPVAPP_Backend.Controllers
 {
@@ -22,6 +22,9 @@ namespace BPVAPP_Backend.Controllers
         [Route("add")]
         public object CreateStudent([FromBody]StudentModel model)
         {
+            model.StartDate = DateTime.Parse(model.StartDate.ToString("yyyy-MM-dd HH:mm:ss"));
+            model.EndDate = DateTime.Parse(model.EndDate.ToString("yyyy-MM-dd HH:mm:ss"));
+
             dbConnection.SaveOrUpdateModel(model);
 
             var rs = new ResponseModel
@@ -47,6 +50,9 @@ namespace BPVAPP_Backend.Controllers
                 rs.Message = "Student niet gevonden";
                 return Json(rs);
             }
+
+            model.StartDate = DateTime.Parse(model.StartDate.ToString("yyyy-MM-dd HH:mm:ss"));
+            model.EndDate = DateTime.Parse(model.EndDate.ToString("yyyy-MM-dd HH:mm:ss"));
 
             dbConnection.SaveOrUpdateModel(model);
 
@@ -81,13 +87,18 @@ namespace BPVAPP_Backend.Controllers
         {
             var rs = new ResponseModel();
 
-            var result = dbConnection.SearchStudent(query);
+            var result = dbConnection.SearchStudent(query).ToList(); ;
 
             if (result == null || result.Count == 0)
             {
                 rs.Message = "Geen resultaat";
                 return Json(rs);
             }
+
+            result.ForEach(i => {
+                i.StartDate = DateTime.Parse(i.StartDate.ToString("yyyy-MM-dd HH:mm:ss"));
+                i.EndDate = DateTime.Parse(i.EndDate.ToString("yyyy-MM-dd HH:mm:ss"));
+            });
 
             rs.Message = $"{result.Count} Gevonden";
             rs.AddList("Student", result);
@@ -101,13 +112,18 @@ namespace BPVAPP_Backend.Controllers
         {
             var rs = new ResponseModel();
 
-            var result = dbConnection.GetStudentsByClass(Class);
+            var result = dbConnection.GetStudentsByClass(Class).ToList();
 
             if (result == null || result.Count == 0)
             {
                 rs.Message = "Geen resultaat";
                 return Json(rs);
             }
+
+            result.ForEach(i => {
+                i.StartDate = DateTime.Parse(i.StartDate.ToString("yyyy-MM-dd HH:mm:ss"));
+                i.EndDate = DateTime.Parse(i.EndDate.ToString("yyyy-MM-dd HH:mm:ss"));
+            });
 
             rs.Message = $"{result.Count} Gevonden";
             rs.AddList("Student", result);
@@ -130,6 +146,9 @@ namespace BPVAPP_Backend.Controllers
                 return Json(res);
             }
 
+            model.StartDate = DateTime.Parse(model.StartDate.ToString("yyyy-MM-dd HH:mm:ss"));
+            model.EndDate = DateTime.Parse(model.EndDate.ToString("yyyy-MM-dd HH:mm:ss"));
+
             res.Message = $"Student gevonden";
             res.AddList("Student", new List<StudentModel> {  model });
 
@@ -141,7 +160,7 @@ namespace BPVAPP_Backend.Controllers
         {
             var res = new ResponseModel();
 
-            var models = dbConnection.GetAllModels<StudentModel>();
+            var models = dbConnection.GetAllModels<StudentModel>().ToList();
 
             if (models == null || models.Count == 0)
             {
@@ -150,6 +169,10 @@ namespace BPVAPP_Backend.Controllers
                 return Json(res);
             }
 
+            models.ForEach(i => {
+                i.StartDate = DateTime.Parse(i.StartDate.ToString("yyyy-MM-dd HH:mm:ss"));
+                i.EndDate = DateTime.Parse(i.EndDate.ToString("yyyy-MM-dd HH:mm:ss"));
+            });
 
             res.Message = $"Studenten gevonden";
             res.AddList("Studenten", models);
