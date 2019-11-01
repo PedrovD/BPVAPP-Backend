@@ -5,6 +5,7 @@ using BPVAPP_Backend.Database.Models;
 using BPVAPP_Backend.Response;
 using System.Collections.Generic;
 using BPVAPP_Backend.Utils;
+using static BPVAPP_Backend.Utils.ModelConverter;
 
 namespace BPVAPP_Backend.Controllers
 {
@@ -226,7 +227,7 @@ namespace BPVAPP_Backend.Controllers
                         studentsList.Add(student);
                     }
                 }
-                res.AddList("Studenten", studentsList);
+                res.AddList("Studenten", ConvertToKeyStudent(studentsList.ToArray()));
             }
 
             return Json(res);
