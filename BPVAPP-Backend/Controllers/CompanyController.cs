@@ -256,6 +256,11 @@ namespace BPVAPP_Backend.Controllers
 
             var studentlist = new List<StudentModel>();
 
+            if (string.IsNullOrEmpty(company.StdNumbers))
+            {
+                company.StdNumbers = string.Empty;
+            }
+
             for (var i = 0; i < inters.Students.Length; i++)
             {
                 var std = dbConnection.GetStudentByStudentNumber(inters.Students[i]);
@@ -279,11 +284,6 @@ namespace BPVAPP_Backend.Controllers
                 res.StatusCode = 404;
                 res.Message = $"{(inters.Students.Length > 1 ? "Studenten zijn niet gevonden of lopen al stage bij dit bedrijf" : "Student is niet gevonden of loopt al stage bij dit bedrijf")}";
                 return Json(res);
-            }
-
-            if(string.IsNullOrEmpty(company.StdNumbers))
-            {
-                company.StdNumbers = string.Empty;
             }
 
             for (var i = 0; i < studentlist.Count; i++)
