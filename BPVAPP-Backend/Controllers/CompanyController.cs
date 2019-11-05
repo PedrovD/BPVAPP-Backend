@@ -294,6 +294,12 @@ namespace BPVAPP_Backend.Controllers
                 return Json(res);
             }
 
+            if (string.IsNullOrEmpty(company.StdNumbers))
+            {
+                company.StdNumbers = string.Empty;
+            }
+
+
             var studentlist = new List<StudentModel>();
 
             for (var i = 0; i < inters.Students.Length; i++)
@@ -321,11 +327,7 @@ namespace BPVAPP_Backend.Controllers
                 return Json(res);
             }
 
-            //if(string.IsNullOrEmpty(company.StdNumbers))
-            //{
-            //    company.StdNumbers = string.Empty;
-            //}
-
+            
             for (var i = 0; i < studentlist.Count; i++)
             {
                 if (!(company.CurrentInterns >= company.Capacity))
@@ -334,7 +336,6 @@ namespace BPVAPP_Backend.Controllers
                     company.StdNumbers += $"{(company.StdNumbers.Length > 1 ? $",{studentlist[i].StudentNumber}" : $"{studentlist[i].StudentNumber}")}";
                     studentlist[i].HasInternship = "Ja";
 
-                    //dbConnection.SaveOrUpdateModel(company);
                     dbConnection.SaveOrUpdateModel(studentlist[i]);
                 }
             }
