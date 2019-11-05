@@ -255,7 +255,14 @@ namespace BPVAPP_Backend.Controllers
             {
                 if (!string.IsNullOrEmpty(students[i]))
                 {
-                    newString += students[i]+",";
+                    if(i == 0)
+                    {
+                        newString += students[i];
+                    }
+                    else
+                    {
+                        newString += ","+students[i];
+                    }
                 }
             }
             company.StdNumbers = newString;
