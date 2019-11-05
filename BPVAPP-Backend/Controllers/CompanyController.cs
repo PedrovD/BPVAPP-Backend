@@ -232,6 +232,39 @@ namespace BPVAPP_Backend.Controllers
 
             return Json(res);
         }
+        [HttpPost]
+        [Route("removeintern/{id}")]
+        public object RemoveStudentFromCompany(int id, [FromBody]StudentModel studentnumber)
+        {
+            var res = new ResponseModel();
+            var newString = "";
+            var company = dbConnection.GetCompanyById(id);
+            var student = dbConnection.GetStudentByStudentNumber(studentnumber.StudentNumber);
+            var students = company.StdNumbers.Split(",");
+            for (int i = 0; i < students.Length; i++)
+            {
+                if (students[i] == student.StudentNumber)
+                {
+                    student.HasInternship = "Nee";
+                    company.CurrentInterns--;
+                    students[i] = "";
+                    break;
+                }
+            }
+            for (int i = 0; i < students.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(students[i]))
+                {
+                    newString += students[i]+",";
+                }
+            }
+            company.StdNumbers = newString;
+
+            dbConnection.SaveOrUpdateModel(company);
+            dbConnection.SaveOrUpdateModel(student);
+
+            return Json(res);
+        }
 
         [HttpPost]
         [Route("add/{id}")]
@@ -281,10 +314,10 @@ namespace BPVAPP_Backend.Controllers
                 return Json(res);
             }
 
-            if(string.IsNullOrEmpty(company.StdNumbers))
-            {
-                company.StdNumbers = string.Empty;
-            }
+            //if(string.IsNullOrEmpty(company.StdNumbers))
+            //{
+            //    company.StdNumbers = string.Empty;
+            //}
 
             for (var i = 0; i < studentlist.Count; i++)
             {
@@ -294,10 +327,11 @@ namespace BPVAPP_Backend.Controllers
                     company.StdNumbers += $"{(company.StdNumbers.Length > 1 ? $",{studentlist[i].StudentNumber}" : $"{studentlist[i].StudentNumber}")}";
                     studentlist[i].HasInternship = "Ja";
 
-                    dbConnection.SaveOrUpdateModel(company);
+                    //dbConnection.SaveOrUpdateModel(company);
                     dbConnection.SaveOrUpdateModel(studentlist[i]);
                 }
             }
+            dbConnection.SaveOrUpdateModel(company);
 
             res.Message = $"{(studentlist.Count > 1 ? "Studenten zijn gekoppeld aan bedrijf" : "Student is gekoppeld aan bedrijf")}";
 
