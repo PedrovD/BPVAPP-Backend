@@ -3,7 +3,6 @@ using BPVAPP_Backend.Database.Models;
 using BPVAPP_Backend.Response;
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace BPVAPP_Backend.Controllers
 {
@@ -33,6 +32,9 @@ namespace BPVAPP_Backend.Controllers
             res.Add("AuthKey",Guid.NewGuid().ToString());
             res.Add("User",string.IsNullOrEmpty(User.Identity.Name) ? "None" : User.Identity.Name);
             res.AddList("Bedrijf",compannies);
+
+            res.AddArrayIn("Bedrijf", "test", new string[] {"Hell",  "World"});
+
             return Json(res);
         }
 

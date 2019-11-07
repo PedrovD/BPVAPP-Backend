@@ -16,7 +16,7 @@ namespace BPVAPP_Backend.Database
         {
             var config = Fluently
                 .Configure()
-                .Database(MySQLConfiguration.Standard.ConnectionString(""))
+                .Database(MySQLConfiguration.Standard.ConnectionString("Server=localhost; Port=3306; Database=bpvdb; Uid=dbuser_local; Pwd=OMgev{>>o>m(;"))
                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<CompanyMapping>())
                 .BuildConfiguration();
 

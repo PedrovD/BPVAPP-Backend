@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BPVAPP_Backend.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.HttpOverrides;
-using System.Net;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-using BPVAPP_Backend.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BPVAPP_Backend
 {
@@ -33,10 +29,17 @@ namespace BPVAPP_Backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.Configure<ForwardedHeadersOptions>(options =>
-            //{
-            //    options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
-            //});
+            services.AddCors(o => o.AddPolicy("ApiPolicy", builder =>
+            {
+                builder.WithOrigins("http://andydeklein.com")
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
+            });
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
 
@@ -62,7 +65,6 @@ namespace BPVAPP_Backend
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
                 })
                 .AddJwtBearer(cfg =>
                 {
@@ -73,7 +75,11 @@ namespace BPVAPP_Backend
                         ValidIssuer = Configuration["JwtIssuer"],
                         ValidAudience = Configuration["JwtIssuer"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
-                        ClockSkew = TimeSpan.Zero // remove delay of token when expire
+                        ClockSkew = TimeSpan.Zero, // remove delay of token when expire
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateIssuerSigningKey = true,
+                        
                     };
                 });
 
@@ -81,12 +87,13 @@ namespace BPVAPP_Backend
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
-            //app.UseForwardedHeaders(new ForwardedHeadersOptions
-            //{
-            //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            //});
+            app.UseCors("ApiPolicy");
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+            });
 
             if (env.IsDevelopment())
             {
@@ -95,6 +102,63 @@ namespace BPVAPP_Backend
 
             app.UseAuthentication();
             app.UseMvc();
+
+            CreateRolesandUsers(serviceProvider).Wait();
+        }
+
+        private async Task CreateRolesandUsers(IServiceProvider serviceProvider)
+        {
+            var _roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var _userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+            bool x = await _roleManager.RoleExistsAsync("Admin");
+            if (!x)
+            {
+                // first we create Admin rool    
+                await _roleManager.CreateAsync(new IdentityRole
+                {
+                    Name = "Admin"
+                });
+
+                // then doc
+                await _roleManager.CreateAsync(new IdentityRole
+                {
+                    Name = "Docent",
+                });
+
+
+                //Here we create a Admin super user who will maintain the website                   
+                var admin = new IdentityUser
+                {
+                    UserName = "BpvAdmin",
+                    Email = "BpvAdmin@bpv.com"
+                };
+
+                //Docent test account
+                var docent = new IdentityUser
+                {
+                    UserName = "BpvDocent",
+                    Email = "BpvDocent@bpv.com"
+                };
+
+                string userPWD = "P@ssw0rd!";
+
+                var checkAdmin = await _userManager.CreateAsync(admin, userPWD);
+                var checkDocent = await _userManager.CreateAsync(docent, userPWD);
+                
+
+                //Add default User to Role Admin    
+                if (checkAdmin.Succeeded && checkDocent.Succeeded)
+                {
+                    var result1 = await _userManager.AddToRolesAsync(admin, new[] { "Admin", "Docent" });
+                    var result2 = await _userManager.AddToRoleAsync(docent, "Docent");
+                    
+                    if(!result1.Succeeded || !result1.Succeeded)
+                    {
+                        // Display error message?
+                    }
+                }
+            }
         }
     }
 }

@@ -41,8 +41,8 @@ namespace BPVAPP_Backend.Controllers
                 rs.Message = "Velden niet ingevuld";
                 return Json(rs);
             }
-            /*
-            string[] EmailSplitStrings = model.Email.Split('@');
+
+            var EmailSplitStrings = model.Email.Split('@');
             if (EmailSplitStrings[1] != "student.roc-nijmegen.nl")
             {
                 rs.Message = $"{model.Email} Is geen juiste school email";
@@ -50,7 +50,7 @@ namespace BPVAPP_Backend.Controllers
                 Response.StatusCode = 401;
                 return Json(rs);
             }
-            */
+
             var exist = await _userManager.FindByEmailAsync(model.Email);
 
             if (exist != null)

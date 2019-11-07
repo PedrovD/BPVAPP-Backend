@@ -40,6 +40,31 @@ namespace BPVAPP_Backend.Response
             }
         }
 
+        public void AddArrayIn(string objectName, string name, object[] data)
+        {
+            if (Data.ContainsKey(objectName))
+            {
+                if (Data[objectName] is JArray)
+                {
+                    var arr = JArray.FromObject(Data[objectName]);
+                    var array = new JArray();
+                    foreach (var item in data)
+                    {
+                        if (item is string)
+                        {
+                            array.Add(item);
+                        }
+                        else
+                        {
+                            array.Add(JObject.FromObject(item));
+                        }
+                    }
+                    arr.Add(array);
+                    Data[objectName] = arr;
+                }
+            }
+        }
+
         public void AddObject(string name, object value)
         {
             if (value == null)
@@ -72,7 +97,6 @@ namespace BPVAPP_Backend.Response
                     array.Add(JObject.FromObject(item));
                 }
             }
-
             Data[name] = array;
         }
 
@@ -96,7 +120,6 @@ namespace BPVAPP_Backend.Response
                     array.Add(JObject.FromObject(item));
                 }
             }
-
             Data[name] = array;
         }
     }

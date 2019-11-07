@@ -32,7 +32,7 @@ namespace BPVAPP_Backend.Controllers
                 Message = $"Student '{model.FirstName}' is toegevoegd"
             };
             rs.Add("StudentId", model.Id);
-
+ 
             return Json(rs);
         }
 
